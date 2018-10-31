@@ -28,15 +28,17 @@ class CrossoveredBudgetLines(models.Model):
                 
                 fetch_lines = self._cr.fetchall()
                 for id, amount in fetch_lines:
-
-                    self._cr.execute("""\
-                        SELECT      tag_id
-                        FROM        account_analytic_line_tag_rel
-                        WHERE       line_id = %s
-                        AND         tag_id = %s
-                        """, (id, line.analytic_tag_id.id))
-               
-                    if len(self._cr.fetchall()) != 0:
+                    if line.analytic_tag_id:
+                        self._cr.execute("""\
+                            SELECT      tag_id
+                            FROM        account_analytic_line_tag_rel
+                            WHERE       line_id = %s
+                            AND         tag_id = %s
+                            """, (id, line.analytic_tag_id.id))
+                   
+                        if len(self._cr.fetchall()) != 0:
+                            result += amount
+                    else:
                         result += amount
 
             line.practical_amount = result
