@@ -32,7 +32,6 @@ class PurchaseOrderLine(models.Model):
 
     @api.onchange('account_analytic_id', 'analytic_tag_ids', 'product_id')
     def onchange_account_analytic_id(self):
-        # logging.warn('ONCHANGE_ACCOUNT_ANALYTICS_ID')
         if self.account_analytic_id and self.product_id:
             #Hago un search de lineas de presupuesto tomando en cuenta:
             # - Fecha del pedido de compra se encuentre en el rango de fechas de la linea del presupuesto.
@@ -42,16 +41,7 @@ class PurchaseOrderLine(models.Model):
             self.por_ejecutar = 0
             if lineas:
                 for linea in lineas:
-                    # logging.getLogger('NOMBRE LINEA PRESUPUESTARIA').warn(linea.general_budget_id.name)
-                    # logging.getLogger('CUENTA ANALITICA').warn(self.account_analytic_id.name)
                     #En estas dos condiciones se revisan los dos filtros faltantes: revisar_cuentas_contables y revisar_etiquetas.
                     if self.revisar_etiquetas(linea.analytic_tag_id):
                         if self.revisar_cuentas_contables(linea.general_budget_id.account_ids):
-                            # logging.getLogger('linea.planned_amount').warn(linea.planned_amount)
-                            # logging.getLogger('linea.practical_amount').warn(linea.practical_amount)
                             self.por_ejecutar = linea.planned_amount - abs(linea.practical_amount)
-        #                     logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
-        #             logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
-        #         logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
-        #     logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
-        # logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
