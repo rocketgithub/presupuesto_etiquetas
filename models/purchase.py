@@ -49,7 +49,7 @@ class PurchaseOrderLine(models.Model):
                         if self.revisar_cuentas_contables(linea.general_budget_id.account_ids):
                             logging.getLogger('linea.planned_amount').warn(linea.planned_amount)
                             logging.getLogger('linea.practical_amount').warn(linea.practical_amount)
-                            self.por_ejecutar = linea.planned_amount - abs(linea.practical_amount)
+                            self.por_ejecutar = abs(linea.planned_amount - linea.practical_amount)
                             logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
                     logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
                 logging.getLogger('self.por_ejecutar').warn(self.por_ejecutar)
