@@ -14,8 +14,14 @@ class PurchaseOrderLine(models.Model):
     #Esta funcion es llamada desde el onchage, y revisa si la cuenta contable del producto coincide con alguna
     #cuenta contable de la posicion presupuestaria de la linea de presupuesto.
     def revisar_cuentas_contables(self, linea_po, account_ids):
+        cuenta_comparar_id = None
+        if linea_po.product_id.property_account_expense_id:
+            cuenta_comparar_id = linea_po.product_id.property_account_expense_id.id
+        elif linea_po.product_id.categ_id.property_account_expense_categ_id:
+            cuenta_comparar_id = linea_po.product_id.categ_id.property_account_expense_categ_id.id
+
         for account_id in account_ids:
-            if linea_po.product_id.property_account_expense_id.id == account_id.id:
+            if cuenta_comparar_id == account_id.id:
                 return True
         return False
 
