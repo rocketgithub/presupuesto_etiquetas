@@ -14,7 +14,7 @@ class PurchaseOrderLine(models.Model):
     #cuenta contable de la posicion presupuestaria de la linea de presupuesto.
     def revisar_cuentas_contables(self, account_ids):
         for account_id in account_ids:
-            if self.product_id.property_account_expense_id.id == account_id.id:
+            if self.product_id.property_stock_account_output_categ_id.id == account_id.id:
                 return True
         return False
 
