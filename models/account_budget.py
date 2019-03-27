@@ -12,7 +12,6 @@ class CrossoveredBudgetLines(models.Model):
     
     @api.multi
     def _compute_practical_amount(self):
-        logging.warn('_COMPUTE_PRACTICAL_AMOUNT')
         for line in self:
             result = 0.0
             acc_ids = line.general_budget_id.account_ids.ids
@@ -41,5 +40,4 @@ class CrossoveredBudgetLines(models.Model):
                             result += amount
                     else:
                         result += amount
-            logging.getLogger('_compute_practical_amount').warn(result)
             line.practical_amount = result
