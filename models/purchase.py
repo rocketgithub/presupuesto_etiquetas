@@ -17,14 +17,13 @@ class PurchaseOrderLine(models.Model):
         cuenta_comparar_id = None
         if linea_po.product_id.property_account_expense_id:
             cuenta_comparar_id = linea_po.product_id.property_account_expense_id.id
-        elif linea_po.product_id.categ_id.property_account_expense_categ_id:
-            cuenta_comparar_id = linea_po.product_id.categ_id.property_account_expense_categ_id.id
+        elif linea_po.product_id.categ_id.property_stock_account_output_categ_id:
+            cuenta_comparar_id = linea_po.product_id.categ_id.property_stock_account_output_categ_id.id
 
         for account_id in account_ids:
             if cuenta_comparar_id == account_id.id:
                 return True
         return False
-
 
     #Esta funcion es llamada desde el onchange, y revisa si la etiqueta en la linea del pedido de compra coincide con la
     #etiqueta de una linea del presupuesto.
@@ -38,7 +37,6 @@ class PurchaseOrderLine(models.Model):
         else:
             return True
 
-
     def sumar_lineas_po_borrador(self, linea_presupuesto):
         lineas_po = self.env['purchase.order.line'].search([('order_id.state', '=', 'draft'), ('date_order', '>=', linea_presupuesto.date_from), ('date_order', '<=', linea_presupuesto.date_to), ('account_analytic_id', '=', self.account_analytic_id.id)])
         res = 0
@@ -47,7 +45,6 @@ class PurchaseOrderLine(models.Model):
                 if self.revisar_cuentas_contables(linea, linea_presupuesto.general_budget_id.account_ids):
                     res += linea.price_subtotal
         return res
-
 
     @api.onchange('account_analytic_id', 'analytic_tag_ids', 'product_id')
     def onchange_account_analytic_id(self):
