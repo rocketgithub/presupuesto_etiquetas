@@ -9,7 +9,7 @@
                 <data>
                     <field name="analytic_tag_ids" position="after">
                         <field name="por_ejecutar"/>
-                        <field name="por_ejecutar_compras"/>
+                        <field name="por_ejecutar_sin_compras"/>
                     </field>
                 </data>
             </field>

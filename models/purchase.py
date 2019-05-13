@@ -9,7 +9,7 @@ class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
     por_ejecutar = fields.Monetary(string='Por ejecutar contabilidad')
-    por_ejecutar_compras = fields.Monetary(string='Por ejecutar compras')
+    por_ejecutar_sin_compras = fields.Monetary(string='Por ejecutar sin compras')
 
     #Esta funcion es llamada desde el onchage, y revisa si la cuenta contable del producto coincide con alguna
     #cuenta contable de la posicion presupuestaria de la linea de presupuesto.
@@ -52,18 +52,25 @@ class PurchaseOrderLine(models.Model):
     @api.onchange('account_analytic_id', 'analytic_tag_ids', 'product_id')
     def onchange_account_analytic_id(self):
         if self.account_analytic_id and self.product_id:
+            logging.warn('IF inicial...')
             #Hago un search de lineas de presupuesto tomando en cuenta:
             # - Fecha del pedido de compra se encuentre en el rango de fechas de la linea del presupuesto.
             # - La cuenta analitica de la linea del pedido de compra coincida con la cuenta analitica de la linea del presupuesto.
             #Existen otros dos filtros, pero esos se revisan en las funciones revisar_cuentas_contables y revisar_etiquetas.
+            logging.warn(self.date_order)
             lineas = self.env['crossovered.budget.lines'].sudo().search([('date_from', '<=', datetime.datetime.strptime(self.date_order, "%Y-%m-%d %H:%M:%S").date()),('date_to', '>=', datetime.datetime.strptime(self.date_order, "%Y-%m-%d %H:%M:%S").date()),('analytic_account_id', '=', self.account_analytic_id.id)])
+            logging.warn(lineas)
             self.por_ejecutar = 0
-            self.por_ejecutar_compras = 0
+            self.por_ejecutar_sin_compras = 0
             if lineas:
+                logging.warn('IF lineas...')
                 for linea in lineas:
+                    logging.warn('FOR linea...')
                     #En estas dos condiciones se revisan los dos filtros faltantes: revisar_cuentas_contables y revisar_etiquetas.
                     if self.revisar_etiquetas(self, linea.analytic_tag_id):
+                        logging.warn('IF revisar_etiquetas...')
                         if self.revisar_cuentas_contables(self, linea.general_budget_id.account_ids):
+                            logging.warn('IF revisar_cuentas_contables...')
                             sumatoria_lineas_borrador = self.sumar_lineas_po_borrador(linea)
-                            self.por_ejecutar_compras = sumatoria_lineas_borrador
+                            self.por_ejecutar_sin_compras = abs(linea.planned_amount - linea.practical_amount)
                             self.por_ejecutar = abs(linea.planned_amount - linea.practical_amount - sumatoria_lineas_borrador)
