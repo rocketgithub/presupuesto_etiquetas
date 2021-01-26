@@ -10,7 +10,6 @@ class CrossoveredBudgetLines(models.Model):
 
     analytic_tag_id = fields.Many2one('account.analytic.tag', string='Etiqueta Analitica')
     
-    @api.multi
     def _compute_practical_amount(self):
         for line in self:
             result = 0.0
