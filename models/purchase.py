@@ -55,7 +55,7 @@ class PurchaseOrderLine(models.Model):
             # - La cuenta analitica de la linea del pedido de compra coincida con la cuenta analitica de la linea del presupuesto.
             #Existen otros dos filtros, pero esos se revisan en las funciones revisar_cuentas_contables y revisar_etiquetas.
             logging.warn(self.date_order)
-            lineas = self.env['crossovered.budget.lines'].sudo().search([('date_from', '<=', datetime.datetime.strptime(self.date_order, "%Y-%m-%d %H:%M:%S").date()),('date_to', '>=', datetime.datetime.strptime(self.date_order, "%Y-%m-%d %H:%M:%S").date()),('analytic_account_id', '=', self.account_analytic_id.id)])
+            lineas = self.env['crossovered.budget.lines'].sudo().search([('date_from', '<=', self.date_order),('date_to', '>=', self.date_order),('analytic_account_id', '=', self.account_analytic_id.id)])
             logging.warn(lineas)
             self.por_ejecutar = 0
             self.por_ejecutar_sin_compras = 0
