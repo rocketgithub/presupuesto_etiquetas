@@ -17,7 +17,7 @@
     'depends': ['purchase', 'account_budget'],
 
     'data': [
-        'views/account_budget_views.xml',
-        'views/purchase_views.xml',
+        # 'views/account_budget_views.xml',
+        # 'views/purchase_views.xml',
     ],
 }
